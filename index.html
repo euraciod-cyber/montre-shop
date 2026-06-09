@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChronoLuxe — Montres de Luxe</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f6f6f4;
+      --bg3: #efefec;
+      --text: #1a1a18;
+      --text2: #6b6b67;
+      --text3: #a0a09b;
+      --border: rgba(0,0,0,0.12);
+      --border2: rgba(0,0,0,0.22);
+      --accent: #1D9E75;
+      --radius: 10px;
+      --radius-lg: 14px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a18;
+        --bg2: #242422;
+        --bg3: #2e2e2b;
+        --text: #f0f0ec;
+        --text2: #9b9b96;
+        --text3: #666663;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.2);
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 0.5px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 50;
+    }
+    .logo { font-size: 17px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; }
+    .logo span { color: var(--text3); font-weight: 400; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .cart-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; cursor: pointer;
+      padding: 7px 16px;
+      border: 0.5px solid var(--border2);
+      border-radius: var(--radius);
+      background: transparent; color: var(--text);
+    }
+    .cart-btn:hover { background: var(--bg2); }
+    .cart-badge {
+      background: var(--accent); color: white;
+      font-size: 10px; font-weight: 600;
+      padding: 1px 7px; border-radius: 20px;
+    }
+
+    /* HERO */
+    .hero {
+      padding: 3rem 2rem;
+      background: var(--bg2);
+      border-bottom: 0.5px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+    .hero h1 { font-size: 32px; font-weight: 500; line-height: 1.25; max-width: 380px; }
+    .hero p { color: var(--text2); font-size: 14px; margin-top: 10px; max-width: 360px; line-height: 1.65; }
+    .hero-stats { display: flex; gap: 32px; margin-top: 24px; flex-wrap: wrap; }
+    .stat-num { font-size: 22px; font-weight: 500; }
+    .stat-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+    .brand-logos { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+    .brand-tag {
+      font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--text3); padding: 4px 12px;
+      border: 0.5px solid var(--border); border-radius: 20px;
+    }
+
+    /* FILTERS */
+    .filters {
+      padding: 1rem 2rem;
+      display: flex; gap: 8px; flex-wrap: wrap;
+      border-bottom: 0.5px solid var(--border);
+      align-items: center;
+    }
+    .filter-label { font-size: 12px; color: var(--text3); margin-right: 4px; }
+    .filter-btn {
+      padding: 5px 14px; border-radius: 20px;
+      font-size: 12px; cursor: pointer;
+      border: 0.5px solid var(--border2);
+      background: transparent; color: var(--text2);
+    }
+    .filter-btn:hover { color: var(--text); }
+    .filter-btn.active {
+      background: var(--text); color: var(--bg);
+      border-color: var(--text);
+    }
+
+    /* GRID */
+    .products {
+      padding: 1.5rem 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .product-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .product-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .product-img {
+      width: 100%; aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg2);
+      position: relative;
+      font-size: 72px;
+    }
+    .brand-label {
+      position: absolute; top: 10px; left: 10px;
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+      font-weight: 500; background: var(--bg);
+      padding: 3px 10px; border-radius: 20px;
+      border: 0.5px solid var(--border);
+      color: var(--text2);
+    }
+    .product-info { padding: 12px 14px 14px; }
+    .product-name { font-size: 14px; font-weight: 500; }
+    .product-ref { font-size: 11px; color: var(--text3); margin-top: 2px; }
+    .product-desc { font-size: 12px; color: var(--text2); margin-top: 6px; line-height: 1.5; }
+    .specs { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+    .spec-tag {
+      font-size: 10px; padding: 2px 8px;
+      background: var(--bg2); border-radius: 20px;
+      color: var(--text2);
+    }
+    .badge {
+      font-size: 10px; padding: 2px 8px;
+      border-radius: 20px; font-weight: 500;
+      display: inline-block; margin-bottom: 6px;
+    }
+    .badge-iconic { background: #E6F1FB; color: #185FA5; }
+    .badge-new { background: #E1F5EE; color: #0F6E56; }
+    .badge-rare { background: #FAECE7; color: #993C1D; }
+    .product-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 12px; padding-top: 10px;
+      border-top: 0.5px solid var(--border);
+    }
+    .price { font-size: 15px; font-weight: 500; }
+    .price-usd { font-size: 11px; color: var(--text3); }
+    .add-btn {
+      background: var(--text); color: var(--bg);
+      border: none; padding: 7px 14px;
+      border-radius: var(--radius); font-size: 12px;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .add-btn:hover { opacity: 0.85; }
+
+    /* CART PANEL */
+    .cart-overlay {
+      display: none; position: fixed;
+      inset: 0; background: rgba(0,0,0,0.3); z-index: 90;
+    }
+    .cart-overlay.open { display: block; }
+    .cart-panel {
+      position: fixed; top: 0; right: -340px;
+      width: 320px; height: 100vh;
+      background: var(--bg);
+      border-left: 0.5px solid var(--border);
+      padding: 1.5rem; z-index: 100;
+      overflow-y: auto;
+      transition: right 0.25s ease;
+    }
+    .cart-panel.open { right: 0; }
+    .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .cart-close-btn { background: none; border: none; cursor: pointer; color: var(--text2); font-size: 18px; }
+    .cart-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 0; border-bottom: 0.5px solid var(--border);
+    }
+    .cart-icon {
+      font-size: 28px; width: 44px; height: 44px;
+      background: var(--bg2); border-radius: var(--radius);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .cart-item-brand { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); }
+    .cart-item-name { font-size: 13px; font-weight: 500; }
+    .cart-item-price { font-size: 12px; color: var(--text2); }
+    .remove-btn { margin-left: auto; background: none; border: none; color: var(--text3); cursor: pointer; font-size: 14px; flex-shrink: 0; }
+    .cart-total-section { margin-top: 1.5rem; padding-top: 1rem; border-top: 0.5px solid var(--border); }
+    .total-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text2); }
+    .total-row.main { font-size: 15px; font-weight: 500; color: var(--text); }
+    .checkout-btn {
+      width: 100%; background: var(--text); color: var(--bg);
+      border: none; padding: 12px; border-radius: var(--radius);
+      font-size: 14px; cursor: pointer; margin-top: 1rem;
+      transition: opacity 0.15s;
+    }
+    .checkout-btn:hover { opacity: 0.85; }
+    .empty-cart { text-align: center; padding: 2rem 0; color: var(--text2); font-size: 14px; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--text); color: var(--bg);
+      padding: 10px 20px; border-radius: var(--radius);
+      font-size: 13px; opacity: 0; pointer-events: none;
+      z-index: 200; transition: opacity 0.25s;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+
+    /* FOOTER */
+    footer {
+      margin-top: 3rem; padding: 2rem;
+      border-top: 0.5px solid var(--border);
+      text-align: center; color: var(--text3);
+      font-size: 12px;
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 1rem; }
+      .hero { padding: 2rem 1rem; }
+      .hero h1 { font-size: 24px; }
+      .filters { padding: 0.75rem 1rem; }
+      .products { padding: 1rem; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+      .brand-logos { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Chrono<span>Luxe</span></div>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="toggleCart()" aria-label="Ouvrir le panier">
+      <i class="ti ti-shopping-bag"></i>
+      <span>Panier</span>
+      <span class="cart-badge" id="cart-count">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <h1>Les plus grandes montres du monde.</h1>
+    <p>Rolex, Omega, Patek Philippe, Cartier, TAG Heuer — authentiques, livrées à Cotonou.</p>
+    <div class="hero-stats">
+      <div><div class="stat-num">5</div><div class="stat-label">Grandes marques</div></div>
+      <div><div class="stat-num">12</div><div class="stat-label">Modèles iconiques</div></div>
+      <div><div class="stat-num">100%</div><div class="stat-label">Authentique</div></div>
+    </div>
+  </div>
+  <div class="brand-logos">
+    <div class="brand-tag">Rolex</div>
+    <div class="brand-tag">Omega</div>
+    <div class="brand-tag">Patek Philippe</div>
+    <div class="brand-tag">Cartier</div>
+    <div class="brand-tag">TAG Heuer</div>
+  </div>
+</section>
+
+<!-- FILTERS -->
+<div class="filters">
+  <span class="filter-label">Filtrer :</span>
+  <button class="filter-btn active" onclick="filterBy('all', this)">Toutes</button>
+  <button class="filter-btn" onclick="filterBy('rolex', this)">Rolex</button>
+  <button class="filter-btn" onclick="filterBy('omega', this)">Omega</button>
+  <button class="filter-btn" onclick="filterBy('patek', this)">Patek Philippe</button>
+  <button class="filter-btn" onclick="filterBy('cartier', this)">Cartier</button>
+  <button class="filter-btn" onclick="filterBy('tag', this)">TAG Heuer</button>
+</div>
+
+<!-- PRODUCTS -->
+<main class="products" id="grid" aria-label="Catalogue de montres"></main>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+
+<!-- CART PANEL -->
+<aside class="cart-panel" id="cart-panel" aria-label="Panier d'achat">
+  <div class="cart-header">
+    <div style="font-size:15px; font-weight:500;">Mon panier</div>
+    <button class="cart-close-btn" onclick="toggleCart()" aria-label="Fermer le panier">✕</button>
+  </div>
+  <div id="cart-items"></div>
+  <div class="cart-total-section" id="cart-total-section" style="display:none;"></div>
+</aside>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 ChronoLuxe · Cotonou, Bénin · Livraison gratuite · Montres authentiques</p>
+  <p style="margin-top:6px;">Tous les prix sont indicatifs (USD × 620 FCFA). Contactez-nous pour disponibilité.</p>
+</footer>
+
+<script>
+  const USD_TO_FCFA = 620;
+
+  const watches = [
+    {
+      id:1, brand:"Rolex", cat:"rolex",
+      name:"Submariner Date", ref:"126610LN",
+      desc:"Le plongeur emblématique. Boîtier Oystersteel 41mm, lunette Cerachrom noire, étanche 300m.",
+      specs:["41mm","Automatique","300m","Oystersteel"],
+      priceUSD:10550, badge:"iconic", icon:"🟢"
+    },
+    {
+      id:2, brand:"Rolex", cat:"rolex",
+      name:"GMT-Master II Batman", ref:"126710BLNR",
+      desc:"Bicolore bleu-noir célébrissime. Indique deux fuseaux horaires simultanément, bracelet Jubilee.",
+      specs:["40mm","Automatique","100m","Jubilee"],
+      priceUSD:10700, badge:"iconic", icon:"🔵"
+    },
+    {
+      id:3, brand:"Rolex", cat:"rolex",
+      name:"Datejust 41", ref:"126300",
+      desc:"Classique intemporel. Cadran ardoise, index bâtons, bracelet Oyster Oystersteel.",
+      specs:["41mm","Automatique","100m","Oyster"],
+      priceUSD:7150, badge:"new", icon:"⬛"
+    },
+    {
+      id:4, brand:"Omega", cat:"omega",
+      name:"Seamaster Diver 300M", ref:"210.30.42.20.01.001",
+      desc:"Portée par James Bond depuis 1995. Lunette céramique noire, anti-magnétique Master Co-Axial.",
+      specs:["42mm","Co-Axial","300m","Acier"],
+      priceUSD:6300, badge:"iconic", icon:"🌊"
+    },
+    {
+      id:5, brand:"Omega", cat:"omega",
+      name:"Speedmaster Moonwatch", ref:"310.30.42.50.01.001",
+      desc:"La montre de la Lune, portée par les astronautes d'Apollo 11 en 1969. Un monument.",
+      specs:["42mm","Manuel","Non","Hesalite"],
+      priceUSD:6900, badge:"iconic", icon:"🌙"
+    },
+    {
+      id:6, brand:"Omega", cat:"omega",
+      name:"Constellation Co-Axial", ref:"131.10.39.20.02.001",
+      desc:"Elégance intemporelle. Lunette griffes iconique, cadran champagne, bracelet intégré.",
+      specs:["39mm","Co-Axial","100m","Acier"],
+      priceUSD:5500, badge:"new", icon:"⭐"
+    },
+    {
+      id:7, brand:"Patek Philippe", cat:"patek",
+      name:"Aquanaut 5167A", ref:"5167A-001",
+      desc:"L'alternative sportive au Nautilus. Bracelet caoutchouc, cadran khaki, mouvement maison calibre 324.",
+      specs:["40mm","Automatique","120m","Acier"],
+      priceUSD:21000, badge:"rare", icon:"🟤"
+    },
+    {
+      id:8, brand:"Patek Philippe", cat:"patek",
+      name:"Calatrava 5227G", ref:"5227G-001",
+      desc:"Le dress watch par excellence. Or blanc 18ct, cabochon saphir sur la couronne, finition miroir.",
+      specs:["39mm","Automatique","30m","Or blanc"],
+      priceUSD:30000, badge:"rare", icon:"⚪"
+    },
+    {
+      id:9, brand:"Cartier", cat:"cartier",
+      name:"Santos de Cartier Large", ref:"WSSA0018",
+      desc:"Né en 1904, le premier bracelet-montre homme. Vis iconiques, bracelet interchangeable.",
+      specs:["39.8mm","Automatique","100m","Acier"],
+      priceUSD:8200, badge:"iconic", icon:"🟡"
+    },
+    {
+      id:10, brand:"Cartier", cat:"cartier",
+      name:"Tank Must de Cartier", ref:"WSTA0052",
+      desc:"Icône du design français depuis 1917. Cadran argenté, chiffres romains, bracelet cuir.",
+      specs:["33.7mm","Quartz","30m","Acier"],
+      priceUSD:3450, badge:"new", icon:"🔶"
+    },
+    {
+      id:11, brand:"TAG Heuer", cat:"tag",
+      name:"Carrera Chronographe", ref:"CBN2A1B.FC6492",
+      desc:"Né sur les circuits de F1. Chronographe automatique, cadran squelette, 60h de réserve.",
+      specs:["42mm","Automatique","100m","Acier"],
+      priceUSD:4400, badge:"iconic", icon:"🔴"
+    },
+    {
+      id:12, brand:"TAG Heuer", cat:"tag",
+      name:"Monaco Chronographe", ref:"CAW211A.FC6356",
+      desc:"Boîtier carré révolutionnaire, rendu célèbre par Steve McQueen dans Le Mans (1971).",
+      specs:["39mm","Automatique","100m","Acier"],
+      priceUSD:5150, badge:"iconic", icon:"🔵"
+    },
+  ];
+
+  let cart = [];
+
+  function fcfa(usd) {
+    return (usd * USD_TO_FCFA).toLocaleString('fr-FR') + ' FCFA';
+  }
+
+  function badgeHTML(b) {
+    if (b === 'iconic') return '<span class="badge badge-iconic">Iconique</span>';
+    if (b === 'new') return '<span class="badge badge-new">Disponible</span>';
+    if (b === 'rare') return '<span class="badge badge-rare">Rare</span>';
+    return '';
+  }
+
+  function renderGrid(cat) {
+    const list = cat === 'all' ? watches : watches.filter(w => w.cat === cat);
+    document.getElementById('grid').innerHTML = list.map(w => `
+      <article class="product-card">
+        <div class="product-img">
+          <span aria-hidden="true">${w.icon}</span>
+          <span class="brand-label">${w.brand}</span>
+        </div>
+        <div class="product-info">
+          ${badgeHTML(w.badge)}
+          <div class="product-name">${w.name}</div>
+          <div class="product-ref">Réf. ${w.ref}</div>
+          <div class="product-desc">${w.desc}</div>
+          <div class="specs">${w.specs.map(s => `<span class="spec-tag">${s}</span>`).join('')}</div>
+          <div class="product-footer">
+            <div>
+              <div class="price">${fcfa(w.priceUSD)}</div>
+              <div class="price-usd">≈ $${w.priceUSD.toLocaleString('en')} USD</div>
+            </div>
+            <button class="add-btn" onclick="addCart(${w.id})" aria-label="Ajouter ${w.name} au panier">+ Panier</button>
+          </div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function filterBy(cat, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderGrid(cat);
+  }
+
+  function addCart(id) {
+    const w = watches.find(x => x.id === id);
+    const ex = cart.find(x => x.id === id);
+    if (ex) ex.qty++;
+    else cart.push({ ...w, qty: 1 });
+    updateCount();
+    renderCartItems();
+    showToast(w.brand + ' ' + w.name + ' ajouté');
+  }
+
+  function removeCart(id) {
+    cart = cart.filter(x => x.id !== id);
+    updateCount();
+    renderCartItems();
+  }
+
+  function updateCount() {
+    document.getElementById('cart-count').textContent = cart.reduce((s, x) => s + x.qty, 0);
+  }
+
+  function renderCartItems() {
+    const el = document.getElementById('cart-items');
+    const tot = document.getElementById('cart-total-section');
+    if (!cart.length) {
+      el.innerHTML = '<div class="empty-cart"><div style="font-size:32px;margin-bottom:8px;">🛍️</div>Votre panier est vide</div>';
+      tot.style.display = 'none';
+      return;
+    }
+    el.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <div class="cart-icon">${item.icon}</div>
+        <div style="flex:1; min-width:0;">
+          <div class="cart-item-brand">${item.brand}</div>
+          <div class="cart-item-name">${item.name}${item.qty > 1 ? ' ×' + item.qty : ''}</div>
+          <div class="cart-item-price">${fcfa(item.priceUSD * item.qty)}</div>
+        </div>
+        <button class="remove-btn" onclick="removeCart(${item.id})" aria-label="Retirer ${item.name}">✕</button>
+      </div>
+    `).join('');
+    const sum = cart.reduce((s, x) => s + x.priceUSD * x.qty, 0);
+    tot.style.display = 'block';
+    tot.innerHTML = `
+      <div class="total-row"><span>Sous-total</span><span>${fcfa(sum)}</span></div>
+      <div class="total-row"><span>Livraison</span><span style="color:#1D9E75;">Gratuite</span></div>
+      <div class="total-row"><span>Assurance</span><span>Incluse</span></div>
+      <div class="total-row main"><span>Total</span><span>${fcfa(sum)}</span></div>
+      <button class="checkout-btn" onclick="checkout()">Commander maintenant</button>
+    `;
+  }
+
+  function toggleCart() {
+    const panel = document.getElementById('cart-panel');
+    const overlay = document.getElementById('cart-overlay');
+    panel.classList.toggle('open');
+    overlay.classList.toggle('open');
+    renderCartItems();
+  }
+
+  function checkout() {
+    showToast('Commande reçue ! Nous vous contactons sous 24h.');
+    cart = [];
+    updateCount();
+    renderCartItems();
+    document.getElementById('cart-panel').classList.remove('open');
+    document.getElementById('cart-overlay').classList.remove('open');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  renderGrid('all');
+</script>
+</body>
+</html>
